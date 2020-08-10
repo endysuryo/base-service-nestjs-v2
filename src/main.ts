@@ -17,7 +17,7 @@ async function bootstrap() {
   SwaggerModule.setup('swagger', app, document);
 
   await app.listen(process.env.APP_PORT, () => {
-    console.info('[Nest]        - Listening on port ' + process.env.APP_PORT);
+    console.info('== Listening on port ' + process.env.APP_PORT);
   });
 }
 bootstrap();

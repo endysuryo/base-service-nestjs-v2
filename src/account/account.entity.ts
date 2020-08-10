@@ -4,6 +4,8 @@ import uuid = require('uuid');
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsNotEmpty, IsEmail } from 'class-validator';
 import { CrudValidationGroups } from '@nestjsx/crud';
+import bcrypt = require('bcrypt');
+// import bcrypt from 'bcrypt';
 
 const { CREATE, UPDATE } = CrudValidationGroups;
 
@@ -51,6 +53,14 @@ export class Account extends BaseEntity {
   @IsNotEmpty({ groups: [CREATE] })
   @Column({ type: 'simple-array' })
   roles: string[];
+
+  @BeforeInsert()
+  protected async hashPassword(): Promise<any> {
+    const saltRounds = 10;
+    const salt = bcrypt.genSaltSync(saltRounds);
+    const hash = bcrypt.hashSync(this.password, salt);
+    this.password = hash;
+  }
 
   @BeforeInsert()
   protected beforeInsert(): void {

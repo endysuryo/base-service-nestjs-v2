@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountModule } from './account/account.module';
 import { InitDB1596979401974 } from './migrations/1596979401974-InitDB';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { InitDB1596979401974 } from './migrations/1596979401974-InitDB';
       migrations: [InitDB1596979401974],
     }),
     AccountModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
