@@ -11,3 +11,9 @@ export class LoginDto {
   @IsNotEmpty()
   password: string;
 }
+export class ForgotDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+}

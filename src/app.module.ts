@@ -6,6 +6,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountModule } from './account/account.module';
 import { InitDB1596979401974 } from './migrations/1596979401974-InitDB';
 import { AuthModule } from './auth/auth.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 @Module({
   imports: [
@@ -30,6 +32,20 @@ import { AuthModule } from './auth/auth.module';
         migrationsDir: __dirname + '/migrations',
       },
       migrations: [InitDB1596979401974],
+    }),
+    MailerModule.forRoot({
+      transport:
+        'smtps://c34fbc3a10ef8b@domain.com:c42a7b805927f7@smtp.domain.com',
+      defaults: {
+        from: '"nest-modules" <modules@nestjs.com>',
+      },
+      template: {
+        dir: __dirname + '/templates',
+        adapter: new HandlebarsAdapter(),
+        options: {
+          strict: true,
+        },
+      },
     }),
     AccountModule,
     AuthModule,

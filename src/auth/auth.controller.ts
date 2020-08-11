@@ -1,12 +1,17 @@
-import { Controller, Post, Body, HttpException } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { LoginDto } from './auth.dto';
+import {
+  Controller,
+  Post,
+  Body,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { LoginDto, ForgotDto } from './auth.dto';
 import { AuthService } from './auth.service';
 import { Account } from '../account/account.entity';
 
 @ApiTags('Auth')
 @Controller()
-@ApiBearerAuth()
 export class AuthController {
   constructor(public service: AuthService) {}
 
@@ -16,10 +21,7 @@ export class AuthController {
     try {
       return this.service.login(dto);
     } catch (err) {
-      throw new HttpException(
-        err.message || err,
-        err.statusCode || err.status || 500,
-      );
+      throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -28,10 +30,16 @@ export class AuthController {
     try {
       return this.service.register(dto);
     } catch (err) {
-      throw new HttpException(
-        err.message || err,
-        err.statusCode || err.status || 500,
-      );
+      throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Post('/forgot-password')
+  async forgotPassword(@Body() dto: ForgotDto): Promise<any> {
+    try {
+      return this.service.forgotPassword(dto);
+    } catch (err) {
+      throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

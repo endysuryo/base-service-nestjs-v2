@@ -2,14 +2,19 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Account } from '../account/account.entity';
-import { LoginDto } from './auth.dto';
+import { LoginDto, ForgotDto } from './auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import bcrypt = require('bcrypt');
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthService extends TypeOrmCrudService<Account> {
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  constructor(@InjectRepository(Account) repo, private jwtService: JwtService) {
+  constructor(
+    @InjectRepository(Account) repo,
+    private jwtService: JwtService,
+    private readonly mailerService: MailerService,
+  ) {
     super(repo);
   }
 
@@ -79,5 +84,33 @@ export class AuthService extends TypeOrmCrudService<Account> {
     }
 
     throw new HttpException('Username already exist', HttpStatus.BAD_REQUEST);
+  }
+
+  async forgotPassword(dto: ForgotDto): Promise<any> {
+    const checkEmail: any = await this.repo.findOne({
+      where: { email: dto.email },
+    });
+
+    if (checkEmail) {
+      await this.mailerService
+        .sendMail({
+          to: 'test@nestjs.com', // list of receivers
+          from: 'noreply@nestjs.com', // sender address
+          subject: 'Testing Nest MailerModule ✔', // Subject line
+          text: 'welcome', // plaintext body
+          html: '<b>welcome</b>', // HTML body content
+        })
+        .then(() => {
+          throw new HttpException('Success', HttpStatus.OK);
+        })
+        .catch(() => {
+          throw new HttpException(
+            'Internal server error',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        });
+    }
+
+    throw new HttpException('Email not found', HttpStatus.NOT_FOUND);
   }
 }
