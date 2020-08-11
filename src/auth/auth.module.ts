@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Account } from '../account/account.entity';
 import { JwtModule } from '@nestjs/jwt';
 import dotenv = require('dotenv');
+import { JwtStrategy } from './jwt.strategy';
 
 const { parsed } = dotenv.config({
   path:
@@ -23,7 +24,7 @@ process.env = { ...process.env, ...parsed };
     }),
   ],
 
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy],
 
   controllers: [AuthController],
 })

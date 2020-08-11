@@ -35,4 +35,49 @@ export class AuthService extends TypeOrmCrudService<Account> {
       access_token: this.jwtService.sign(payload),
     };
   }
+
+  async register(dto: Partial<Account>): Promise<any> {
+    const checkEmail: boolean = await this.areEmailExist(dto.email);
+    const checkUsername: boolean = await this.areUsernameExist(dto.username);
+
+    if (!checkEmail && !checkUsername) {
+      const createAccount = await this.repo.create(dto);
+      const saveAccount = await this.repo.save(createAccount);
+
+      if (saveAccount) {
+        throw new HttpException('Success', HttpStatus.OK);
+      } else {
+        throw new HttpException(
+          'Internal server error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+    } else {
+      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async areEmailExist(dto: string): Promise<any> {
+    const areEmailExist = await this.repo.findOne({
+      where: { email: dto },
+    });
+
+    if (!areEmailExist) {
+      return false;
+    }
+
+    throw new HttpException('Email already exist', HttpStatus.BAD_REQUEST);
+  }
+
+  async areUsernameExist(dto: string): Promise<any> {
+    const areUsernameExist = await this.repo.findOne({
+      where: { username: dto },
+    });
+
+    if (!areUsernameExist) {
+      return false;
+    }
+
+    throw new HttpException('Username already exist', HttpStatus.BAD_REQUEST);
+  }
 }
