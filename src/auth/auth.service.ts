@@ -102,13 +102,13 @@ export class AuthService extends TypeOrmCrudService<Account> {
         })
         .then(() => {
           throw new HttpException('Success', HttpStatus.OK);
-        })
-        .catch(() => {
-          throw new HttpException(
-            'Internal server error',
-            HttpStatus.INTERNAL_SERVER_ERROR,
-          );
         });
+      // .catch(() => {
+      //   throw new HttpException(
+      //     'Internal server error',
+      //     HttpStatus.INTERNAL_SERVER_ERROR,
+      //   );
+      // });
     }
 
     throw new HttpException('Email not found', HttpStatus.NOT_FOUND);

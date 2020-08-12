@@ -9,6 +9,13 @@ import { AuthModule } from './auth/auth.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
+// mailer
+const urlTransport = `${process.env.MAIL_PROTOCOL}://${
+  process.env.MAIL_USERNAME
+}:${process.env.MAIL_PASSWORD}@${process.env.MAIL_HOST}${
+  process.env.MAIL_PORT ? ':' + process.env.MAIL_PORT : ''
+}`;
+
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -34,8 +41,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
       migrations: [InitDB1596979401974],
     }),
     MailerModule.forRoot({
-      transport:
-        'smtps://c34fbc3a10ef8b@domain.com:c42a7b805927f7@smtp.domain.com',
+      transport: urlTransport,
       defaults: {
         from: '"nest-modules" <modules@nestjs.com>',
       },

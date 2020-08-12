@@ -20,7 +20,7 @@ process.env = { ...process.env, ...parsed };
     TypeOrmModule.forFeature([Account]),
     JwtModule.register({
       secret: process.env.SECRET_KEY,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '1H' },
     }),
   ],
 
